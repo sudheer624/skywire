@@ -1,0 +1,27 @@
+ #Twitter Authentication
+ sudo apt-get install python-oauth2
+ 
+ #NLTK
+ http://playingwithsid.blogspot.com/2009/07/nltk-installation-with-python.html
+ http://code.google.com/p/nltk/downloads/list
+ http://playingwithsid.blogspot.com/2009/07/nltk-on-ubuntu-quick-start-guide.html
+ http://nltk.org/install.html
+ 
+ #plot
+sudo apt-get install python-matplotlib
+sudo apt-get install python-mpltoolkits.basemap
+http://maps.googleapis.com/maps/api/geocode/json?address=madanapalle,+india&sensor=false
+
+#Dictionary (spell checks and word suggestions)
+sudo apt-get install python-enchant
+
+#Python map reduce frame work - DISCO
+http://bscientific.org/blog/disco-install-notes-for-ubuntu-1204-lts-precise-pangolin/
+creating disco data tag :  ddfs push data:wiki_sample_5000 /workspace-memorymap/wikipedia/text-format/samples/*
+for restart disco : disco stop; disco start
+To see data inside tag : ddfs cat data:wiki_sample_5000
+Setting :
+	/etc/disco/settings.py
+	/srv/disco/disco_8989.config (this is the home dir for user disco)
+Installation path : /home/swatha/disco/src/disco
+user-name : disco

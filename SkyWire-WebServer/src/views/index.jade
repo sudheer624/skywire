@@ -1,0 +1,18 @@
+extend layout
+block content
+    script(src="/jquery/jquery-2.1.0.min.js")
+    script(type='text/javascript').
+        $(document).ready(function(){
+            $('#email-btn').click(function() {
+                alert($('#email').val());
+            });
+        });
+    p
+        |This is my first public web server
+    p
+        | I am excited to host this, one good step to the future
+block sidebar
+  .widget
+    h1 Text Summarization
+    input#email(type="text", value='document url')
+    input#email-btn(type="button", value='Summary')

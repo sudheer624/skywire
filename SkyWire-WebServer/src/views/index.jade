@@ -7,10 +7,15 @@ block content
                 alert($('#email').val());
             });
         });
-    p
-        |This is my first public web server
-    p
-        | I am excited to host this, one good step to the future
+    if summaryElems
+        each elem in summaryElems
+            p
+                |#{elem}
+    else
+        p
+            |This is my first public web server
+        p
+            | I am excited to host this, one good step to the future
 block sidebar
   .widget
     h1 Text Summarization

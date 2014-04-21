@@ -2,9 +2,12 @@ var express = require("express");
 var stylus = require("stylus");
 var nib = require("nib");
 var request = require("request");
+var htmlEntities = require("html-entities").AllHtmlEntities;
+var entities = new htmlEntities();
 
 var app = express();
 var summerizeUrl = "http://ec2-54-86-17-214.compute-1.amazonaws.com:8081/summerize?url=";
+var googleSearchUrl = "https://www.googleapis.com/customsearch/v1?key=AIzaSyD84EFDTC-UP_0rwon5xCNPXT8ZKhuELOQ&cx=017576662512468239146:omuauf_lfve&q=";
 
 function compile(str, path) {
   return stylus(str)
@@ -26,12 +29,30 @@ app.get('/', function (req, res) {
 });
 
 app.get('/summary', function (req, res) {
-	request(summerizeUrl + req.query.url, function(err, response, body) {
-		responseJSON = JSON.parse(body);
-		summaryElems = responseJSON.data;
-		console.log(summaryElems);
-		res.render('index',{ title : 'SkyWire', "summaryElems" : summaryElems});
-	});
+    request(summerizeUrl + req.query.url, function(err, response, body) {
+        responseJSON = JSON.parse(body);
+        var summaryElems = responseJSON.data;
+        console.log(summaryElems);
+        res.render('index',{ title : 'SkyWire', "summaryElems" : summaryElems});
+    });
+});
+
+app.get('/search', function (req, res) {
+	console.log(req.query.q);
+    request(googleSearchUrl + req.query.q, function(err, response, body) {
+        responseJSON = JSON.parse(body);
+        var summaryItems = [];
+        if(responseJSON.items) {
+            for(var i = 0; i < responseJSON.items.length; i++) {
+                var summaryItem = {};
+                summaryItem.title = responseJSON.items[i].htmlTitle;
+                summaryItem.link = responseJSON.items[i].link;
+                summaryItems.push(summaryItem);
+            }
+        }
+        console.log(summaryItems);
+        res.render('main-widget',{"summaryItems" : summaryItems});
+    });
 });
 
 app.listen(8080);

@@ -6,10 +6,13 @@ html(lang="en")
   body
     header
       h1 Swatha - still under construction
+    .search-bar
+        block search-bar-content
     .container
+      .left-pane
+          block left-pane-content
       .main-content
-        block content
-      .sidebar
-        block sidebar
-    footer
-      p Running on node with Express, Jade and Stylus
+         block content
+            
+      //- .sidebar
+      //-  block sidebar

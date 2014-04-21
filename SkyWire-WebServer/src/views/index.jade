@@ -1,23 +1,20 @@
 extend layout
+block search-bar-content
+    p
+        | Google-Fast 
+    input#search-text(type="text")
+block left-pane-content
 block content
     script(src="/jquery/jquery-2.1.0.min.js")
     script(type='text/javascript').
         $(document).ready(function(){
-            $('#email-btn').click(function() {
-                alert($('#email').val());
+            $('#search-text').keyup(function(event) {
+                if(event.keyCode == 13) {
+                    var ajax_load = "<img src='img/load.gif' alt='loading...' />";
+                    $('#search-results').html(ajax_load).load('/search?q=' + encodeURIComponent($("#search-text").val()));
+                }
             });
         });
-    if summaryElems
-        each elem in summaryElems
-            p
-                |#{elem}
-    else
-        p
-            |This is my first public web server
-        p
-            | I am excited to host this, one good step to the future
-block sidebar
-  .widget
-    h1 Text Summarization
-    input#email(type="text", value='document url')
-    input#email-btn(type="button", value='Summary')
+    div#search-results
+//- block sidebar
+//-  .widget

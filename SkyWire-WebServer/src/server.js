@@ -2,11 +2,13 @@ var express = require("express");
 var stylus = require("stylus");
 var nib = require("nib");
 var request = require("request");
+var async = require("async");
 var htmlEntities = require("html-entities").AllHtmlEntities;
 var entities = new htmlEntities();
 
 var app = express();
-var summerizeUrl = "http://ec2-54-86-17-214.compute-1.amazonaws.com:8081/summerize?url=";
+//var summerizeUrl = "http://ec2-54-86-17-214.compute-1.amazonaws.com:8081/summerize?url=";
+var summerizeUrl = "http://localhost:8081/summerize";
 var googleSearchUrl = "https://www.googleapis.com/customsearch/v1?key=AIzaSyD84EFDTC-UP_0rwon5xCNPXT8ZKhuELOQ&cx=018175008996529345468:pgsdofhw0vs&q=";
 
 function compile(str, path) {
@@ -47,11 +49,32 @@ app.get('/search', function (req, res) {
                 var summaryItem = {};
                 summaryItem.title = responseJSON.items[i].htmlTitle;
                 summaryItem.link = responseJSON.items[i].link;
+                summaryItem.query = req.query.q;
                 summaryItems.push(summaryItem);
             }
         }
         console.log(summaryItems);
-        res.render('main-widget',{"summaryItems" : summaryItems});
+        async.map(summaryItems, function(summaryItem, cb) {
+        	var cSummaryUrl = summerizeUrl + "?url=" + summaryItem.link + "&query=" + summaryItem.query;
+        	request(cSummaryUrl, function(error, response, body) {
+        		if(!error) {
+        			console.log("completed for link : " + summaryItem.link);
+        			console.log(response);
+        			responseData = JSON.parse(body);
+        			summaryItem.data = responseData.data;
+        			summaryItem.summary = responseData.summary;
+        			cb(null, summaryItem);
+        		} else {
+        			cb(null, {});
+        		}
+        	});
+        }, function(error, results) {
+        	if(!error) {
+        		res.render('main-widget',{"summaryItems" : results});
+        	} else {
+        		res.render('main-widget',{"summaryItems" : []});
+        	}
+        });
     });
 });
 

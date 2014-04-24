@@ -5,3 +5,9 @@ sudo pip install twisted
 sudo pip install httplib2
 sudo pip install beautifulsoup4
 sudo pip install html5lib
+sudo pip install numpy
+sudo pip install scipy
+sudo easy_install -U setuptools
+sudo easy_install gensim
+sudo pip install nltk
+sudo python -m nltk.downloader -d /usr/share/nltk_data all

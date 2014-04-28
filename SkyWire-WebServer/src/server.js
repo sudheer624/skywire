@@ -9,10 +9,10 @@ var entities = new htmlEntities();
 var app = express();
 var summerizeUrl = "";
 
-if(process.argv[2] === "prod") {
-	summerizeUrl = "http://ec2-54-86-17-214.compute-1.amazonaws.com:8081/summerize";
-} else if(process.argv[2] === "local") {
+if(process.argv[2] === "local") {
 	summerizeUrl = "http://localhost:8081/summerize";
+} else {
+	summerizeUrl = "http://ec2-54-86-17-214.compute-1.amazonaws.com:8081/summerize";
 }
 
 var googleSearchUrl = "https://www.googleapis.com/customsearch/v1?key=AIzaSyD84EFDTC-UP_0rwon5xCNPXT8ZKhuELOQ&cx=018175008996529345468:pgsdofhw0vs&q=";

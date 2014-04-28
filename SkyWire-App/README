@@ -11,3 +11,5 @@ sudo easy_install -U setuptools
 sudo easy_install gensim
 sudo pip install nltk
 sudo python -m nltk.downloader -d /usr/share/nltk_data all
+sudo ARCHFLAGS=-Wno-error=unused-command-line-argument-hard-error-in-future pip install gevent
+sudo pip install bottle

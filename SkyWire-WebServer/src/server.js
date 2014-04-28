@@ -7,8 +7,14 @@ var htmlEntities = require("html-entities").AllHtmlEntities;
 var entities = new htmlEntities();
 
 var app = express();
-//var summerizeUrl = "http://ec2-54-86-17-214.compute-1.amazonaws.com:8081/summerize?url=";
-var summerizeUrl = "http://localhost:8081/summerize";
+var summerizeUrl = "";
+
+if(process.argv[2] === "prod") {
+	summerizeUrl = "http://ec2-54-86-17-214.compute-1.amazonaws.com:8081/summerize";
+} else if(process.argv[2] === "local") {
+	summerizeUrl = "http://localhost:8081/summerize";
+}
+
 var googleSearchUrl = "https://www.googleapis.com/customsearch/v1?key=AIzaSyD84EFDTC-UP_0rwon5xCNPXT8ZKhuELOQ&cx=018175008996529345468:pgsdofhw0vs&q=";
 
 function compile(str, path) {
@@ -34,13 +40,11 @@ app.get('/summary', function (req, res) {
     request(summerizeUrl + req.query.url, function(err, response, body) {
         responseJSON = JSON.parse(body);
         var summaryElems = responseJSON.data;
-        console.log(summaryElems);
         res.render('index',{ title : 'SkyWire', "summaryElems" : summaryElems});
     });
 });
 
 app.get('/search', function (req, res) {
-	console.log(req.query.q);
     request(googleSearchUrl + req.query.q, function(err, response, body) {
         responseJSON = JSON.parse(body);
         var summaryItems = [];
@@ -53,13 +57,16 @@ app.get('/search', function (req, res) {
                 summaryItems.push(summaryItem);
             }
         }
-        console.log(summaryItems);
+        var latencies = [];
         async.map(summaryItems, function(summaryItem, cb) {
         	var cSummaryUrl = summerizeUrl + "?url=" + summaryItem.link + "&query=" + summaryItem.query;
+        	var latency = {};
+        	latency.startTime = Date.now();
+        	latency.url = cSummaryUrl;
         	request(cSummaryUrl, function(error, response, body) {
+        		latency.endTime = Date.now();
+        		latencies.push(latency);
         		if(!error) {
-        			console.log("completed for link : " + summaryItem.link);
-        			console.log(response);
         			responseData = JSON.parse(body);
         			summaryItem.data = responseData.data;
         			summaryItem.summary = responseData.summary;
@@ -69,6 +76,10 @@ app.get('/search', function (req, res) {
         		}
         	});
         }, function(error, results) {
+        	for(var i = 0; i < latencies.length; i++) {
+        		var delay = latencies[i].endTime - latencies[i].startTime;
+        		console.log(" delay : " + delay.toString() + " startTime : " + latencies[i].startTime.toString());
+        	}
         	if(!error) {
         		res.render('main-widget',{"summaryItems" : results});
         	} else {
